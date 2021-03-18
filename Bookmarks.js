@@ -33,11 +33,11 @@ define( ["qlik", "text!./template.html"],
 
 				var hRefMask = location.pathname.substring(0,location.pathname.indexOf('/sense/'));
 
-				emdsBookmarks.onclick = function loadQlikBookmarks(){
+				qlikExtBookmarks.onclick = function loadQlikBookmarks(){
 					
 					console.log(hRefMask);
 					//clean up old bookmark dropdown
-					removeAllChildNodes('emdsBookmarks')
+					removeAllChildNodes('qlikExtBookmarks')
 					
 					$.ajax({
 						url: hRefMask + "/qps/user?xrfkey=GAMG717cpRsrx7xR",
@@ -55,7 +55,7 @@ define( ["qlik", "text!./template.html"],
 								"X-Qlik-User": user.userId
 							},
 							success: function(bookmarks){
-								$('#emdsBookmarks').append(creatDropValues(bookmarks));
+								$('#qlikExtBookmarks').append(creatDropValues(bookmarks));
 							},
 							error: function(err){
 								console.log(err);
@@ -68,10 +68,10 @@ define( ["qlik", "text!./template.html"],
 					});
 				};
 				//onchange handles when a value is selected in the dropdown
-				emdsBookmarks.onchange = function navigateBookmark(){
+				qlikExtBookmarks.onchange = function navigateBookmark(){
 				
 					//get dropdown selection, split value to create array with [0] app ID & [1] Bookmark Engine ID
-					var selectBox = document.getElementById("emdsBookmarks");
+					var selectBox = document.getElementById("qlikExtBookmarks");
 					var selectedValue = selectBox.options[selectBox.selectedIndex].value.split('|');
 					
 					//next series of commands is to retrieve a sheet from the app with the bookmark. Any sheet works; the referenced bookmark will force navigation to the appropriate sheet.
