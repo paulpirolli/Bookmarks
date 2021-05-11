@@ -9,7 +9,7 @@ define( ["qlik", "text!./template.html"],
 				exportData: false
 			},
 			paint: function () {
-				return qlik.Promise.resolve();co
+				return qlik.Promise.resolve();
 			},
 			controller: ['$scope', function ( $scope ) {
 
@@ -48,7 +48,7 @@ define( ["qlik", "text!./template.html"],
 					success: function (user){
 
 						$.ajax({ 	
-							url: hRefMask + "/qrs/app/object/full?xrfkey=GAMG717cpRsrx7xR&filter=objectType eq 'bookmark' and app.published eq true and owner.userId eq '" + user.userId + "'",
+							url: hRefMask + "/qrs/app/object/full?xrfkey=GAMG717cpRsrx7xR&filter=objectType eq 'bookmark' and app.published eq true and owner.userId eq '" + user.userId + "'&orderby=app.name",
 							type: "GET",
 							headers: {
 								"X-Qlik-XrfKey":"GAMG717cpRsrx7xR",
