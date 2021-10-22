@@ -1,4 +1,4 @@
-define( ["qlik", "text!./template.html"],
+define( ["qlik", "text!./template.html","css!./Styles.css"],
 	function ( qlik, template ) {
 
 		return {
@@ -9,64 +9,42 @@ define( ["qlik", "text!./template.html"],
 				exportData: false
 			},
 			paint: function () {
-				return qlik.Promise.resolve();
+				return qlik.Promise.resolve();co
 			},
 			controller: ['$scope', function ( $scope ) {
 
-				function creatDropValues(bookmarks){
-					var vreturn = '';
-					$.each(bookmarks,function(position,bookmark){
-						vreturn += '<option id="bookmark'+position+'" value="'+bookmark.app.id+'|'+bookmark.engineObjectId+'"><strong>' +bookmark.app.name +'</strong> - '+bookmark.name +'</option>'
-					});
-					return vreturn;
-				};
-				function removeAllChildNodes(domElem) {
-					var parent = document.getElementById(domElem);
-					while (parent.children.length > 1) {
-						if(parent.firstChild.selected === false || parent.firstChild.selected === undefined){
-							parent.removeChild(parent.firstChild);
-						}else{
-							parent.removeChild(parent.children[1]);
-						}
-					}
-				};
-
 				var hRefMask = location.pathname.substring(0,location.pathname.indexOf('/sense/'));
-
-				qlikExtBookmarks.onclick = function loadQlikBookmarks(){
-					
-					console.log(hRefMask);
-					//clean up old bookmark dropdown
-					removeAllChildNodes('qlikExtBookmarks')
-					
+				$.when(
 					$.ajax({
 						url: hRefMask + "/qps/user?xrfkey=GAMG717cpRsrx7xR",
 						type: "GET",
 						headers: {
 							"X-Qlik-XrfKey":"GAMG717cpRsrx7xR"
 						},
-					success: function (user){
-
-						$.ajax({ 	
-							url: hRefMask + "/qrs/app/object/full?xrfkey=GAMG717cpRsrx7xR&filter=objectType eq 'bookmark' and app.published eq true and owner.userId eq '" + user.userId + "'&orderby=app.name",
-							type: "GET",
-							headers: {
-								"X-Qlik-XrfKey":"GAMG717cpRsrx7xR",
-								"X-Qlik-User": user.userId
-							},
-							success: function(bookmarks){
-								$('#qlikExtBookmarks').append(creatDropValues(bookmarks));
-							},
-							error: function(err){
-								console.log(err);
-							}
-						});
-					},
-					error: function (error){
-						console.log(error)
+						error: function (error){
+							console.log(error)
 						}
-					});
-				};
+					})
+				).then(function(user){
+					//console.log(user);
+					var url = hRefMask + "/qrs/app/object/full?xrfkey=GAMG717cpRsrx7xR&filter=objectType eq 'bookmark' and app.published eq true and owner.userId eq '" + user.userId + "'&orderby=app.name";
+					return $.ajax({
+						url: url,
+						type: "GET",
+						headers: {
+							"X-Qlik-XrfKey":"GAMG717cpRsrx7xR",
+							"X-Qlik-User": user.userId
+						},
+						cache: true,
+						complete: function(bookmarks){
+							$scope.bookmarks = bookmarks;
+						},
+						error: function(err){
+							console.log('Error: ', err);
+						}
+					})
+				});
+
 				//onchange handles when a value is selected in the dropdown
 				qlikExtBookmarks.onchange = function navigateBookmark(){
 				
@@ -93,8 +71,9 @@ define( ["qlik", "text!./template.html"],
 						}
 					});//*/
 					
-				}
-				//$scope.html = "Hello World";
+				};
+				$scope.html = "Choose bookmark";
+				console.log($scope.html);
 			}]
 		};
 
